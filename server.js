@@ -28,6 +28,7 @@ app.post('*', function(req, res){
   lockfile.lock(filePath + ".lock", {wait: 2000}, function (err){
     if (err){
       log.error("Error locking: ", filePath);
+      log.error(err);
       res.send({status: "error"});
       return;
     }
@@ -40,6 +41,7 @@ app.post('*', function(req, res){
         if (err){
           log.error("error writing data to: %s", filePath);
           log.error(err);
+          res.send({status: "error"});
         } });
     });
     req.on('end', function(){
