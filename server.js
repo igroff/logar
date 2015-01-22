@@ -1,7 +1,6 @@
 var express         = require('express');
 var morgan          = require('morgan');
 var connect         = require('connect');
-var connectTimeout  = require('connect-timeout');
 var log             = require('simplog');
 var path            = require('path');
 var fs              = require('fs');
