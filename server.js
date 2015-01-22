@@ -28,6 +28,7 @@ app.post('*', function(req, res){
   lockfile.lock(filePath + ".lock", {wait: 2000}, function (err){
     if (err){
       log.error("Error locking: ", filePath);
+      res.send({status: "error"});
       return;
     }
     req.on('data', function(chunk){
