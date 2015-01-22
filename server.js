@@ -42,20 +42,29 @@ app.post('*', function(req, res){
           log.error("error writing data to: %s", filePath);
           log.error(err);
           res.send({status: "error"});
-        } });
+        }
+      });
     });
     req.on('end', function(){
       fs.appendFile(filePath, "\n", function(err){
         if (err){
           log.error("error writing EOL data to: %s", filePath);
           log.error(err);
-        } }); 
+          // while this is annoying, we'll consider it non fata
+          // so will not notify the caller
+        }
+      }); 
+      // similarly to EOL appending we don't concern our caller with the
+      // potential failure during unlock
       lockfile.unlock(filePath + ".lock", function(err){
         if (err){
           log.error("Error unlocking file: ", filePath);
-        } });
+        }
+      });
       res.send({status: "complete"});
-    }); }); });
+    });
+  });
+});
 
 listenPort = process.env.PORT || 3000;
 
