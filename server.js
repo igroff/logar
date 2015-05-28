@@ -23,7 +23,7 @@ function getFilePathForRequest(req){
 
 app.post('*', function(req, res){
   var filePath = getFilePathForRequest(req);
-  var isDateStamped = false;
+  var isDateStamped = "no_timestamp" in req.query;
   log.info("handling: ", req.path);
   lockfile.lock(filePath + ".lock", {wait: 2000}, function (err){
     if (err){
@@ -34,7 +34,7 @@ app.post('*', function(req, res){
     }
     req.on('data', function(chunk){
       if (!isDateStamped){
-        chunk = "[" + new Date().toString() + "] " + chunk.toString();
+        chunk = "[" + new Date().toISOString() + "] " + chunk.toString();
         isDateStamped = true;
       }
       fs.appendFile(filePath, chunk, function(err){
