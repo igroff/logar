@@ -25,6 +25,7 @@ app.post('*', function(req, res){
   var filePath = getFilePathForRequest(req);
   var isDateStamped = "no_timestamp" in req.query;
   log.info("handling: ", req.path);
+  var s = "";
   lockfile.lock(filePath + ".lock", {wait: 2000}, function (err){
     if (err){
       log.error("Error locking: ", filePath);
@@ -37,23 +38,17 @@ app.post('*', function(req, res){
         chunk = "[" + new Date().toISOString() + "] " + chunk.toString();
         isDateStamped = true;
       }
-      fs.appendFile(filePath, chunk, function(err){
+      s += chunk;
+    });
+    req.on('end', function(){
+      s += "\n"
+      fs.appendFile(filePath, s, function(err){
         if (err){
           log.error("error writing data to: %s", filePath);
           log.error(err);
           res.send({status: "error"});
         }
       });
-    });
-    req.on('end', function(){
-      fs.appendFile(filePath, "\n", function(err){
-        if (err){
-          log.error("error writing EOL data to: %s", filePath);
-          log.error(err);
-          // while this is annoying, we'll consider it non fata
-          // so will not notify the caller
-        }
-      }); 
       // similarly to EOL appending we don't concern our caller with the
       // potential failure during unlock
       lockfile.unlock(filePath + ".lock", function(err){
