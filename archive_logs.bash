@@ -17,7 +17,7 @@ for LOG_FILE in ${LOG_FILES}; do
     TARGET=${LOG_FILE}-$( date +%F_%H_%M_%S )-${EC2_REGION}
     mv ${LOG_FILE} ${TARGET}
     gzip ${TARGET}
-    aws s3 cp ${TARGET}.gz ${S3_ARCHIVE_BUCKET}/${LOG_FILE%%_*}/
+    aws s3 cp ${TARGET}.gz ${S3_ARCHIVE_BUCKET}/${LOG_FILE%%_*}/$(date +%Y)/$(date +%m)/$(date +%d)/
     rm ${TARGET}.gz
   fi;
 done
